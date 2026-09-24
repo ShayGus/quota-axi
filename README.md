@@ -1019,6 +1019,7 @@ The Claude and Codex rows describe default discovery; [`--profile-only`](#profil
 - Inference stays off by default. `--allow-muse-inference` permits one bounded `POST https://api.meta.ai/v1/responses` using model `muse-spark-1.3`, input `ping`, streaming, and at most 16 output tokens. This spends one prompt. With `--tui`, the flag requires `--once`.
 - The process-list check skips the request when the Muse CLI is active. If quota-axi cannot read the current user's process list, it also skips the request. The streamed response parser stops at the first usable subscription event and ignores placeholder frames. HTTP 401/403 rejects that key; HTTP 429 is transient and stops source handover.
 - The report reads the `window` and `weekly` subscription percentages and reset times. Muse inference readings are never cached. [OnWatch Muse probe reference](https://github.com/onllm-dev/onwatch/blob/main/docs/MUSE_SETUP.md); [process guard reference](https://github.com/onllm-dev/onwatch/blob/main/internal/agent/muse_agent.go).
+- Muse support uses option three from [quota-axi issue #277](https://github.com/kunchenguid/quota-axi/issues/277): one opt-in inference read that mints no credential.
 
 ### Delegated credential refresh
 
