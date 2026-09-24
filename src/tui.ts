@@ -532,12 +532,22 @@ function hasWhollyUnknownWindowRelationships(provider: ProviderQuota): boolean {
   if (
     provider.windows.length === 0 ||
     semantics?.status !== "unknown" ||
-    semantics.unresolvedWindowIds === undefined
+    semantics.effectiveAvailability.length > 0
   ) {
     return false;
   }
-  const unresolved = new Set(semantics.unresolvedWindowIds);
-  return provider.windows.every(({ id }) => unresolved.has(id));
+  const unresolved = new Set(semantics.unresolvedWindowIds ?? []);
+  return provider.windows.every(
+    (window) => unresolved.has(window.id) || isSpendOnlyWindow(window),
+  );
+}
+
+function isSpendOnlyWindow(window: QuotaWindow): boolean {
+  return (
+    window.percentRemaining === undefined &&
+    window.percentUsed === undefined &&
+    Number.isFinite(window.spentUsd)
+  );
 }
 
 function windowsOnlyHeadline(stale: boolean | undefined): Line[] {
@@ -661,11 +671,7 @@ function windowRow(
   }
   const pct = window.percentRemaining;
   const reset = resetCountdown(window, generatedAtMs);
-  if (
-    pct === undefined &&
-    window.percentUsed === undefined &&
-    Number.isFinite(window.spentUsd)
-  ) {
+  if (isSpendOnlyWindow(window)) {
     const captionWidth = WINDOW_BAR_WIDTH + 1 + 4;
     const limit = Number.isFinite(window.limitUsd)
       ? ` / ${window.limitUsd} USD`

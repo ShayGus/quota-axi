@@ -156,6 +156,9 @@ describe("renderQuotaTui structure", () => {
 
     expect(output).toContain("spent 0.42 USD");
     expect(output).not.toContain("0.42%");
+    expect(output).toContain("per-window usage");
+    expect(output).toContain("no combined bound");
+    expect(output).not.toContain("effective unknown");
   });
 
   it("names the binding window on the headline instead of the model scope", () => {
