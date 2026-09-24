@@ -304,10 +304,7 @@ export function normalizeOllamaCloudPayload(
         kind: "unknown",
         spentUsd: activitySpend,
       });
-    } else if (
-      activity === undefined ||
-      (activity.cost !== undefined && activity.cost !== null)
-    ) {
+    } else {
       untrustedWindowIds.add("activity");
     }
   }

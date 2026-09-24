@@ -213,7 +213,7 @@ describe("Ollama Cloud provider", () => {
     expect(interpreted.quotaSemantics?.status).toBe("partial");
   });
 
-  it.each([["1.68"], [5], [[]]])(
+  it.each([["1.68"], [5], [[]], [{}]])(
     "keeps a malformed activity entry %j untrusted",
     async (activity) => {
       const { adapter } = adapterFor({
