@@ -59,7 +59,10 @@ function adapterFor(
     requests.push({ url: String(input), init });
     return args.responses?.[responseIndex++] ?? quotaResponse();
   };
-  const environment = args.environment ?? { META_API_KEY: KEY };
+  const environment = args.environment ?? {
+    META_API_KEY: KEY,
+    MUSE_AUTH_PATH: missingAuthPath(),
+  };
   const adapter = createMuseAdapter({
     sources: defaultMuseCredentialSources(environment),
     fetch,
@@ -91,6 +94,10 @@ function writeAuthFile(key: string, mode = 0o600): string {
   );
   chmodSync(path, mode);
   return path;
+}
+function missingAuthPath(): string {
+  tempDir ??= mkdtempSync(join(tmpdir(), "quota-axi-muse-"));
+  return join(tempDir, "missing-auth.json");
 }
 
 describe("Muse Code quota provider", () => {
@@ -178,6 +185,10 @@ describe("Muse Code quota provider", () => {
       },
     });
     const { adapter, requests, processList } = adapterFor({
+      environment: {
+        META_API_KEY: KEY,
+        MUSE_AUTH_PATH: writeAuthFile(FILE_KEY),
+      },
       responses: [new Response(stream)],
     });
 

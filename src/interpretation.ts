@@ -385,10 +385,15 @@ function ollamaCloudSemantics(
     };
   }
   if (quotaWindows.length === 0) {
-    return unknownSemantics(
-      windows,
-      "Ollama Cloud reports dollar usage without a cap, so effective quota headroom is unknown.",
-    );
+    if (windows.length > 0) {
+      return {
+        status: "unknown",
+        description:
+          "Ollama Cloud reports dollar usage without a cap, so effective quota headroom is unknown.",
+        effectiveAvailability: [],
+      };
+    }
+    return unknownSemantics(windows, "Ollama Cloud reports no quota windows.");
   }
   return knownSemantics(
     [availability("all_models", quotaWindows, generatedAt)],

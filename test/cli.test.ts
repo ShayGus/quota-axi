@@ -396,10 +396,15 @@ describe("delegated credential refresh wiring", () => {
     expect(seen[0]?.allowClaudeInference).toBeUndefined();
     expect(seen[1]?.allowClaudeInference).toBe(true);
   });
-  it("passes the Muse inference opt-in only when requested", async () => {
+  it("requires explicit Muse scope before passing the inference opt-in", async () => {
     useTempCache();
     const seen: ProviderOptions[] = [];
     PROVIDERS["muse-code"] = recordingProvider(seen, "muse-code");
+
+    await expect(
+      quotaCommand(["--allow-muse-inference"], undefined),
+    ).rejects.toThrow("requires explicit --provider muse-code");
+    expect(seen).toHaveLength(0);
 
     await quotaCommand(["--provider", "muse-code"], undefined);
     await quotaCommand(
@@ -410,14 +415,13 @@ describe("delegated credential refresh wiring", () => {
     expect(seen[0]?.allowMuseInference).toBeUndefined();
     expect(seen[1]?.allowMuseInference).toBe(true);
   });
-
   it("rejects unrelated, recurring, and auth-command Muse inference opt-ins", async () => {
     await expect(
       quotaCommand(
         ["--provider", "claude", "--allow-muse-inference"],
         undefined,
       ),
-    ).rejects.toThrow("requires the muse-code provider");
+    ).rejects.toThrow("requires explicit --provider muse-code");
     await expect(
       quotaCommand(
         ["--provider", "muse-code", "--tui", "--allow-muse-inference"],

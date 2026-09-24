@@ -392,9 +392,9 @@ function validateClaudeInference(flags: QuotaFlags): void {
 }
 function validateMuseInference(flags: QuotaFlags): void {
   if (!flags.allowMuseInference) return;
-  if (!flags.providers.includes("muse-code")) {
+  if (!flags.explicitProviders || !flags.providers.includes("muse-code")) {
     throw new AxiError(
-      "--allow-muse-inference requires the muse-code provider",
+      "--allow-muse-inference requires explicit --provider muse-code",
       "VALIDATION_ERROR",
       ["Run `quota-axi --provider muse-code --allow-muse-inference`"],
     );

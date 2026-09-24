@@ -159,6 +159,7 @@ describe("Ollama Cloud provider", () => {
       },
     ]);
     expect(report.state.untrustedWindowIds).toBeUndefined();
+    expect(interpreted.quotaSemantics?.unresolvedWindowIds ?? []).toEqual([]);
     expect(interpreted.quotaSemantics).toMatchObject({
       status: "unknown",
       effectiveAvailability: [],
