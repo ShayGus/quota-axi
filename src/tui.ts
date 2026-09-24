@@ -99,10 +99,12 @@ const ACCENTS: Record<ProviderId, StyleSpec> = {
   copilot: { rgb: [116, 199, 236], ansi16: "94", bold: true },
   grok: { rgb: [180, 190, 254], ansi16: "95", bold: true },
   kimi: { rgb: [245, 194, 231], ansi16: "95", bold: true },
+  "muse-code": { rgb: [221, 160, 221], ansi16: "95", bold: true },
   zai: { rgb: [129, 216, 209], ansi16: "96", bold: true },
   agy: { rgb: [232, 184, 109], ansi16: "93", bold: true },
   alibaba: { rgb: [255, 155, 120], ansi16: "91", bold: true },
   "opencode-go": { rgb: [160, 210, 255], ansi16: "96", bold: true },
+  "ollama-cloud": { rgb: [173, 216, 230], ansi16: "96", bold: true },
   commandcode: { rgb: [110, 210, 168], ansi16: "92", bold: true },
   minimax: { rgb: [255, 196, 112], ansi16: "93", bold: true },
   mimo: { rgb: [174, 214, 241], ansi16: "96", bold: true },
@@ -658,8 +660,32 @@ function windowRow(
     return shareWindowRow(window, generatedAtMs, windows);
   }
   const pct = window.percentRemaining;
-  const marker = window.pace?.timeRemainingPercent;
   const reset = resetCountdown(window, generatedAtMs);
+  if (
+    pct === undefined &&
+    window.percentUsed === undefined &&
+    Number.isFinite(window.spentUsd)
+  ) {
+    const captionWidth = WINDOW_BAR_WIDTH + 1 + 4;
+    const limit = Number.isFinite(window.limitUsd)
+      ? ` / ${window.limitUsd} USD`
+      : "";
+    return [
+      { text: "   " },
+      { text: padEndDisplay(shortWindowLabel(window), 8), style: "label" },
+      {
+        text: padEndDisplay(
+          truncate(`spent ${window.spentUsd} USD${limit}`, captionWidth),
+          captionWidth,
+        ),
+        style: "label",
+      },
+      { text: "  " },
+      { text: padEndDisplay(reset, 6), style: "dim" },
+      { text: " " },
+    ];
+  }
+  const marker = window.pace?.timeRemainingPercent;
   return [
     { text: "   " },
     { text: padEndDisplay(shortWindowLabel(window), 8), style: "label" },
