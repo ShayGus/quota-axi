@@ -213,6 +213,22 @@ describe("Ollama Cloud provider", () => {
     expect(interpreted.quotaSemantics?.status).toBe("partial");
   });
 
+  it.each([["1.68"], [5], [[]]])(
+    "keeps a malformed activity entry %j untrusted",
+    async (activity) => {
+      const { adapter } = adapterFor({
+        payload: { limits: { monthly: { usage: "0.42" } }, activity },
+      });
+
+      const report = await adapter.fetchQuota(OPTIONS);
+
+      expect(report.windows.map((window) => window.id)).toEqual([
+        "monthly_spend",
+      ]);
+      expect(report.state.untrustedWindowIds).toEqual(["activity"]);
+    },
+  );
+
   it("does not request without a usable key and reports invalid keys as present", async () => {
     const absent = adapterFor({ environment: {} });
     const absentReport = await absent.adapter.fetchQuota(OPTIONS);

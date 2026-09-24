@@ -63,7 +63,7 @@ const WINDOW_KEYS: Readonly<Record<string, true>> = {
 };
 
 type Dependencies = {
-  environment: Readonly<Record<string, string | undefined>>;
+  environment?: Readonly<Record<string, string | undefined>>;
   fetch: typeof globalThis.fetch;
   now: () => number;
   deadlineMs: number;
@@ -135,7 +135,6 @@ export function createOllamaCloudAdapter(
   overrides: Partial<Dependencies> = {},
 ): ProviderAdapter {
   const dependencies: Dependencies = {
-    environment: process.env,
     fetch: providerFetch,
     now: Date.now,
     deadlineMs: REQUEST_DEADLINE_MS,
@@ -147,7 +146,8 @@ export function createOllamaCloudAdapter(
     id: "ollama-cloud",
     label: LABEL,
     fetchQuota: () => fetchQuota(dependencies),
-    inspectAuth: () => Promise.resolve(inspectAuth(dependencies.environment)),
+    inspectAuth: () =>
+      Promise.resolve(inspectAuth(dependencies.environment ?? process.env)),
   };
 }
 
@@ -157,7 +157,7 @@ async function fetchQuota(dependencies: Dependencies): Promise<ProviderQuota> {
   const attempts: SourceAttempt[] = [];
   let resolution: EnvPiCredentialResolution;
   try {
-    resolution = resolveCredential(dependencies.environment);
+    resolution = resolveCredential(dependencies.environment ?? process.env);
   } catch {
     resolution = {
       status: "error",
@@ -304,7 +304,10 @@ export function normalizeOllamaCloudPayload(
         kind: "unknown",
         spentUsd: activitySpend,
       });
-    } else if (activity?.cost !== undefined && activity.cost !== null) {
+    } else if (
+      activity === undefined ||
+      (activity.cost !== undefined && activity.cost !== null)
+    ) {
       untrustedWindowIds.add("activity");
     }
   }
