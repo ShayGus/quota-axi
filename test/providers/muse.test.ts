@@ -103,9 +103,9 @@ describe("Muse Code quota provider", () => {
     expect(processList).not.toHaveBeenCalled();
     expect(report.state).toMatchObject({
       status: "unavailable",
-      authStatus: "usable",
       error: "muse_inference_opt_in_required",
     });
+    expect(report.state.authStatus).toBeUndefined();
     const advised = annotateQuotaAdvice({
       generatedAt: new Date(NOW).toISOString(),
       providers: [report],
@@ -333,7 +333,7 @@ describe("Muse Code quota provider", () => {
     });
 
     expect(requests).toHaveLength(0);
-    expect(report.state.authStatus).toBe("usable");
+    expect(report.state.authStatus).toBeUndefined();
     expect(report.state.error).toBe(
       processes.status === "listed"
         ? "muse_cli_running"

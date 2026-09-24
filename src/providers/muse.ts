@@ -376,7 +376,8 @@ async function fetchQuota(
   if (candidates.length === 0) return localFailureReport(resolved);
 
   if (!options.allowMuseInference) {
-    return unavailableWithUsableAuth(
+    return failedMuseReport(
+      "unavailable",
       MUSE_INFERENCE_OPT_IN_ERROR,
       attemptsForSources(resolved, undefined, MUSE_INFERENCE_OPT_IN_ERROR),
     );
@@ -384,7 +385,8 @@ async function fetchQuota(
 
   const processBlocker = await museProcessBlocker(dependencies);
   if (processBlocker) {
-    return unavailableWithUsableAuth(
+    return failedMuseReport(
+      "unavailable",
       processBlocker,
       attemptsForSources(resolved, undefined, processBlocker),
     );
@@ -888,15 +890,6 @@ function localFailureReport(
     "muse_credential_unavailable",
     attempts,
   );
-}
-
-function unavailableWithUsableAuth(
-  error: string,
-  attempts: SourceAttempt[],
-): ProviderQuota {
-  const report = failedMuseReport("unavailable", error, attempts);
-  report.state.authStatus = "usable";
-  return report;
 }
 
 function failedMuseReport(
