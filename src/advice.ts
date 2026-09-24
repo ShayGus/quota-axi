@@ -331,7 +331,7 @@ function claudeInferenceHelpLine(): string {
   return `Tell your user: the CLAUDE_CODE_OAUTH_TOKEN session is usable but its token cannot read the quota endpoint. Running \`${CLAUDE_INFERENCE_REMEDY_COMMAND}\` once reads its five-hour and seven-day quota by spending one bounded native Claude Code startup plus a small inference request; quota-axi never does this by default.`;
 }
 function museInferenceHelpLine(): string {
-  return `Tell your user: running \`${MUSE_INFERENCE_REMEDY_COMMAND}\` once sends a small Muse Code request and spends one prompt. quota-axi never does this by default.`;
+  return `Tell your user: running \`${MUSE_INFERENCE_REMEDY_COMMAND}\` once spends at most one successful streamed Muse Code ping. quota-axi never does this by default.`;
 }
 
 function claudeTokenRefreshHelpLine(provider: ProviderQuota): string {

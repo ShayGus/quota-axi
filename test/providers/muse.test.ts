@@ -114,7 +114,9 @@ describe("Muse Code quota provider", () => {
       reason: "inference_opt_in_required",
       remedyCommand: MUSE_INFERENCE_REMEDY_COMMAND,
     });
-    expect(advised.help?.[0]).toContain("spends one prompt");
+    expect(advised.help?.[0]).toContain(
+      "spends at most one successful streamed",
+    );
   });
   it("reports absent credentials without probing the process list", async () => {
     tempDir = mkdtempSync(join(tmpdir(), "quota-axi-muse-"));
